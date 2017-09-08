@@ -8,6 +8,17 @@ RUN  mkdir  /var/www/localhost/htdocs/nextcloud && \
      curl --insecure -s https://download.nextcloud.com/server/releases/latest.tar.bz2 | tar xj -C /var/www/localhost/htdocs/nextcloud --strip-components=1 &&  echo "<?php phpinfo(); ?>" > /var/www/localhost/htdocs/index.php &&  \
      echo 'include "mod_fastcgi_fpm.conf"' >> /etc/lighttpd/lighttpd.conf 
 
+RUN { \
+        echo 'opcache.memory_consumption=128'; \
+        echo 'opcache.interned_strings_buffer=8'; \
+        echo 'opcache.max_accelerated_files=10000'; \
+        echo 'opcache.revalidate_freq=1'; \
+        echo 'opcache.fast_shutdown=1'; \
+        echo 'opcache.save_comments=1'; \
+        echo 'opcache.enable_cli=1'; \
+    } >> /etc/php7/conf.d/00_opcache.ini
+
+
 EXPOSE 80
 
 RUN  chown -R lighttpd:nobody  /var/www/localhost/htdocs/ &&  find /var/www/localhost/htdocs/ -type d -exec chmod 770 {} \; && find /var/www/localhost/htdocs/ -type f -exec chmod 660 {} \;
