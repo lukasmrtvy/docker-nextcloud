@@ -36,7 +36,7 @@ apk add --no-cache php7-fpm \
                    php7-imagick \
                    ffmpeg \
                    php7-pcntl \
-                   curl lighttpd bash libsmbclient libreoffice \
+                   curl lighttpd bash libsmbclient libreoffice 
 
 RUN  mkdir  /var/www/localhost/htdocs/nextcloud && \
      curl --insecure -s https://download.nextcloud.com/server/releases/latest.tar.bz2 | tar xj -C /var/www/localhost/htdocs/nextcloud --strip-components=1 &&  echo "<?php phpinfo(); ?>" > /var/www/localhost/htdocs/index.php &&  \
