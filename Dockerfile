@@ -33,6 +33,7 @@ apk add --no-cache php7-fpm \
                    php7-gmp \
                    php7-apcu \
                    php7-memcached \ 
+                   php7-opcache \
                    php7-imagick \
                    ffmpeg \
                    php7-pcntl \
