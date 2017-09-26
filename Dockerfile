@@ -1,5 +1,7 @@
 FROM alpine:latest
 
+ENV NEXTCLOUD_VERSION 12.0.3
+
 RUN apk update --no-cache && \
 apk upgrade --no-cache && \
 apk add --no-cache php7-fpm \
@@ -40,7 +42,7 @@ apk add --no-cache php7-fpm \
                    curl lighttpd bash libsmbclient libreoffice 
 
 RUN  mkdir  /var/www/localhost/htdocs/nextcloud && \
-     curl --insecure -s https://download.nextcloud.com/server/releases/latest.tar.bz2 | tar xj -C /var/www/localhost/htdocs/nextcloud --strip-components=1 &&  echo "<?php phpinfo(); ?>" > /var/www/localhost/htdocs/index.php &&  \
+     curl -sL https://download.nextcloud.com/server/releases/nextcloud-${NEXTCLOUD_VERSION}.tar.bz2 | tar xj -C /var/www/localhost/htdocs/nextcloud --strip-components=1 && \
      echo 'include "mod_fastcgi_fpm.conf"' >> /etc/lighttpd/lighttpd.conf 
 
 RUN { \
@@ -54,8 +56,14 @@ RUN { \
     } >> /etc/php7/conf.d/00_opcache.ini
 
 
-EXPOSE 80
+RUN   find /var/www/localhost/htdocs/ -type d -exec chmod 770 {} \; && \
+      find /var/www/localhost/htdocs/ -type f -exec chmod 660 {} \; && \
+      chown -R lighttpd:nobody  /var/www/localhost/htdocs/
 
-RUN  chown -R lighttpd:nobody  /var/www/localhost/htdocs/ &&  find /var/www/localhost/htdocs/ -type d -exec chmod 770 {} \; && find /var/www/localhost/htdocs/ -type f -exec chmod 660 {} \;
+LABEL url=https://api.github.com/repos/nextcloud/server/releases/latest
+LABEL name=Nextcloud
+LABEL version=${NEXTCLOUD_VERSION}
+
+EXPOSE 80
 
 CMD php-fpm7 -D && lighttpd -D -f /etc/lighttpd/lighttpd.conf
