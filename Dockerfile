@@ -27,7 +27,6 @@ apk add --no-cache php7-fpm \
                    php7-intl \
                    php7-mcrypt \ 
                    php7-openssl \
-                   php7-smbclient \
                    php7-ldap \  
                    php7-ftp \ 
                    php7-imap \
