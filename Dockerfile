@@ -25,44 +25,60 @@ apk add --no-cache php7-fpm \
                    php7-fileinfo \
                    php7-bz2 \
                    php7-intl \
-                   php7-mcrypt \ 
+                   php7-mcrypt \
                    php7-openssl \
-                   php7-ldap \  
-                   php7-ftp \ 
+                   php7-ldap \
+                   php7-ftp \
                    php7-imap \
                    php7-exif \
                    php7-gmp \
                    php7-apcu \
-                   php7-memcached \ 
+                   php7-memcached \
                    php7-opcache \
                    php7-imagick \
-                   ffmpeg \
                    php7-pcntl \
-                   curl lighttpd bash libsmbclient libreoffice 
+                   ffmpeg \
+                   libsmbclient \
+                   curl nginx supervisor
 
 RUN  mkdir  /var/www/localhost/htdocs/nextcloud && \
-     curl -sL https://download.nextcloud.com/server/releases/nextcloud-${NEXTCLOUD_VERSION}.tar.bz2 | tar xj -C /var/www/localhost/htdocs/nextcloud --strip-components=1 && \
-     echo 'include "mod_fastcgi_fpm.conf"' >> /etc/lighttpd/lighttpd.conf 
+     curl -sL https://download.nextcloud.com/server/releases/nextcloud-${NEXTCLOUD_VERSION}.tar.bz2 | tar xj -C /var/www/localhost/htdocs/nextcloud --strip-components=1
+
+RUN   mkdir -p /var/www/localhost/htdocs/nextcloud/data /run/nginx/  && \
+      find /var/www/localhost/htdocs/ -type d -exec chmod 770 {} \; && \
+      find /var/www/localhost/htdocs/ -type f -exec chmod 660 {} \; && \
+      chown -R nginx:nobody  /var/www/localhost/htdocs/
 
 RUN { \
-        echo 'opcache.memory_consumption=128'; \
-        echo 'opcache.interned_strings_buffer=8'; \
-        echo 'opcache.max_accelerated_files=10000'; \
-        echo 'opcache.revalidate_freq=1'; \
-        echo 'opcache.fast_shutdown=1'; \
-        echo 'opcache.save_comments=1'; \
-        echo 'opcache.enable_cli=1'; \
-    } >> /etc/php7/conf.d/00_opcache.ini
+  echo 'opcache.enable=1'; \
+  echo 'opcache.enable_cli=1'; \
+  echo 'opcache.interned_strings_buffer=8'; \
+  echo 'opcache.max_accelerated_files=10000'; \
+  echo 'opcache.memory_consumption=128'; \
+  echo 'opcache.save_comments=1'; \
+  echo 'opcache.revalidate_freq=1'; \
+  } >> /etc/php7/conf.d/00_opcache.ini
+
+RUN { \
+        echo 'env[HOSTNAME] = $HOSTNAME'; \
+        echo 'env[PATH] = /usr/local/bin:/usr/bin:/bin'; \
+        echo 'env[TMP] = /tmp'; \
+        echo 'env[TMPDIR] = /tmp'; \
+        echo 'env[TEMP] = /tmp'; \
+} >> /etc/php7/php-fpm.d/www.conf
 
 
-RUN   find /var/www/localhost/htdocs/ -type d -exec chmod 770 {} \; && \
-      find /var/www/localhost/htdocs/ -type f -exec chmod 660 {} \; && \
-      chown -R lighttpd:nobody  /var/www/localhost/htdocs/
+COPY custom.conf /etc/nginx/conf.d/default.conf
+COPY supervisord.conf /tmp/
+
 
 LABEL url=https://api.github.com/repos/nextcloud/server/releases/latest
-LABEL name=Nextcloud
 LABEL version=${NEXTCLOUD_VERSION}
 
 EXPOSE 80
 
-CMD php-fpm7 -D && lighttpd -D -f /etc/lighttpd/lighttpd.conf
+VOLUME /var/www/localhost/htdocs/nextcloud/data/
+VOLUME  /var/www/localhost/htdocs/nextcloud/config/
+
+
+CMD /usr/bin/supervisord -c /tmp/supervisord.conf
