@@ -44,7 +44,8 @@ apk add --no-cache php7-fpm \
   mkdir -p /var/www/localhost/htdocs/nextcloud/data /run/nginx/  && \
   find /var/www/localhost/htdocs/ -type d -exec chmod 770 {} \; && \
   find /var/www/localhost/htdocs/ -type f -exec chmod 660 {} \; && \
-  chown -R nginx:nobody  /var/www/localhost/htdocs/
+  chown -R nginx:nobody  /var/www/localhost/htdocs/ && \
+  apk del curl
 
 RUN { \
   echo 'opcache.enable=1'; \
