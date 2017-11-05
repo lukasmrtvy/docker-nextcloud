@@ -37,7 +37,7 @@ apk add --no-cache php7-fpm \
                    php7-imagick \
                    php7-pcntl \
                    ffmpeg \
-                   libsmbclient \
+                   samba-client \
                    tzdata curl nginx supervisor && \
   mkdir  /var/www/localhost/htdocs/nextcloud && \
   curl -sL https://download.nextcloud.com/server/releases/nextcloud-${NEXTCLOUD_VERSION}.tar.bz2 | tar xj -C /var/www/localhost/htdocs/nextcloud --strip-components=1 && \
