@@ -69,14 +69,12 @@ RUN { \
 COPY custom.conf /etc/nginx/conf.d/default.conf
 COPY supervisord.conf /tmp/
 
-
-LABEL url=https://api.github.com/repos/nextcloud/server/releases/latest
-LABEL version=${NEXTCLOUD_VERSION}
-
 EXPOSE 80
 
 VOLUME /var/www/localhost/htdocs/nextcloud/data/
 VOLUME /var/www/localhost/htdocs/nextcloud/config/
 
+LABEL url=https://github.com/nextcloud/server/
+LABEL version=${NEXTCLOUD_VERSION}
 
 CMD /usr/bin/supervisord -c /tmp/supervisord.conf
