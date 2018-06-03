@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.7
 
 ENV NEXTCLOUD_VERSION 12.0.3
 
