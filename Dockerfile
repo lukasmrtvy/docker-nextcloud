@@ -2,7 +2,7 @@ FROM alpine:3.7
 
 ENV NEXTCLOUD_VERSION 12.0.3
 
-RUN apk update --no-cache && \
+RUN set -xe && apk update --no-cache && \
 apk add --no-cache php7-fpm \
                    php7-ctype \
                    php7-dom \
