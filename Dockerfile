@@ -16,7 +16,6 @@ apk add --no-cache php7-fpm \
                    php7-xmlreader \
                    php7-xmlwriter \
                    php7-zip \
-                   php7-zlib \
                    php7-pdo_mysql \
                    php7-pdo_pgsql \
                    php7-pdo_sqlite \
